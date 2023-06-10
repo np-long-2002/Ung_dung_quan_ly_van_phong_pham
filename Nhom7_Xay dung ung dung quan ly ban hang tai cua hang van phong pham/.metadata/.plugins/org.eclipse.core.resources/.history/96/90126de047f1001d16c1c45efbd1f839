@@ -1,0 +1,67 @@
+package dao;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import model.HoaDon;
+import model.ItemSanPham;
+import model.ItemThongKe;
+import model.LoaiSanPham;
+import model.NhanVien;
+import model.SanPham;
+
+public class NhanVienDAO extends ConnectDatabase{
+	public ArrayList<NhanVien> getALlNhanVien(){
+		ArrayList<NhanVien> arrayList = new ArrayList<NhanVien>();
+		try {
+			String sql = "select * from NhanVien";
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			while(rs.next()) {
+				NhanVien nv = new NhanVien();
+				nv.setMaNhanVien(rs.getInt("MaNhanVien"));
+				nv.setTenNhanVien(rs.getString("TenNhanVien"));
+				nv.setGioiTinh(rs.getString("GioiTinh"));
+				nv.setNgayVaoLam(rs.getString("NgayVaoLam"));
+				nv.setSoDienThoai(rs.getString("SoDienThoai"));
+				nv.setMaChucVu(rs.getInt("MaChucVu"));
+				arrayList.add(nv);
+			}
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return arrayList;
+	}
+
+	public NhanVien getNhanVienByName(String name){
+		try {
+			String sql = "select * from NhanVien WHERE TenNhanVien = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, name);
+			pstmt.executeUpdate();
+			ResultSet rs = pstmt.getGeneratedKeys();
+			if(rs.next()) {
+				NhanVien nv = new NhanVien();
+				nv.setMaNhanVien(rs.getInt("MaNhanVien"));
+				nv.setTenNhanVien(rs.getString("TenNhanVien"));
+				nv.setGioiTinh(rs.getString("GioiTinh"));
+				nv.setNgayVaoLam(rs.getString("NgayVaoLam"));
+				nv.setSoDienThoai(rs.getString("SoDienThoai"));
+				nv.setMaChucVu(rs.getInt("MaChucVu"));
+				rs.close();
+				pstmt.close();
+				return nv;
+			}
+			rs.close();
+			pstmt.close();
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return null;
+	}
+}

@@ -1,0 +1,101 @@
+package dao;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import model.NhaCungCap;
+
+
+
+public class NhaCungCapDAO extends ConnectDatabase {
+	public ArrayList<NhaCungCap> docLS(){
+		ArrayList<NhaCungCap> arrayList = new ArrayList<NhaCungCap>();
+		try {
+			String sql = "Select * from NhaCungCap";
+			Statement statement = conn.createStatement();
+			ResultSet set = statement.executeQuery(sql);
+			while(set.next()) {
+				NhaCungCap ncc= new NhaCungCap();
+				ncc.setMaNhaCungCap(set.getInt(1));
+				ncc.setTenNhaCungCap(set.getString(2));
+				ncc.setDiaChi(set.getString(3));
+				ncc.setSoDienThoai(set.getString(4));
+				ncc.setEmail(set.getString(5));
+				arrayList.add(ncc);
+			}
+			conn.close();
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return arrayList;
+}
+	public int luuNCC(NhaCungCap ncc) {
+		try {
+			String sql = "insert into NhaCungCap(TenNhaCungCap,DiaChi,SoDienThoai,Email) values (?,?,?,?)";
+			PreparedStatement preparedStatement = conn.prepareStatement(sql);
+			preparedStatement.setString(1,ncc.getTenNhaCungCap());
+			preparedStatement.setString(2,ncc.getDiaChi());
+			preparedStatement.setString(3,ncc.getSoDienThoai());
+			preparedStatement.setString(4,ncc.getEmail());
+			return preparedStatement.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	public boolean xoaNCC(String ma) {
+		try {
+			String sql = "delete from NhaCungCap where MaNhaCungCap = ? ";
+			PreparedStatement preparedStatement = conn.prepareStatement(sql);
+			preparedStatement.setString(1, ma);
+			return preparedStatement.executeUpdate() >0;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public int capnhapNCC(NhaCungCap ncc) {
+		try {
+			String sql = "update NhaCungCap set TenNhaCungCap = ? , DiaChi = ? , SoDienThoai = ?,Email = ? where MaNhaCungCap = ? ";
+			PreparedStatement preparedStatement = conn.prepareStatement(sql);
+			preparedStatement.setInt(5, ncc.getMaNhaCungCap());
+			preparedStatement.setString(1,ncc.getTenNhaCungCap());
+			preparedStatement.setString(2, ncc.getDiaChi());
+			preparedStatement.setString(3, ncc.getSoDienThoai());
+			preparedStatement.setString(4, ncc.getEmail());
+			return preparedStatement.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	public ArrayList<NhaCungCap> tkNCC(String ten){
+		ArrayList<NhaCungCap> arrayList = new ArrayList<NhaCungCap>();
+		try {
+			String sql = "SELECT DISTINCT * FROM NhaCungCap WHERE TenNhaCungCap LIKE '?%'";
+			PreparedStatement preparedStatement = conn.prepareStatement(sql);
+			preparedStatement.setString(1,ten);
+			ResultSet set = preparedStatement.executeQuery();
+			while(set.next()) {
+				NhaCungCap ncc= new NhaCungCap();
+				ncc.setMaNhaCungCap(set.getInt(1));
+				ncc.setTenNhaCungCap(set.getString(2));
+				ncc.setDiaChi(set.getString(3));
+				ncc.setSoDienThoai(set.getString(4));
+				ncc.setEmail(set.getString(5));
+				arrayList.add(ncc);
+			}
+			conn.close();
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return arrayList;
+}
+}
